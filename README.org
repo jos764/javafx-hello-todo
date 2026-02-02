@@ -1,0 +1,61 @@
+* Descargar JavaFX
+** En GNU/Linux
+#+begin_src sh
+  $ wget https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_linux-x64_bin-sdk.zip
+  $ unzip openjfx-21.0.10_linux-x64_bin-sdk.zip -d javafx-sdk
+#+end_src
+
+** En Windows
+#+begin_src sh
+  $ Invoke-WebRequest -Uri https://download2.gluonhq.com/openjfx/21.0.10/openjfx-21.0.10_windows-x64_bin-sdk.zip -OutFile openjfx.zip
+  $ Expand-Archive -Path openjfx.zip -DestinationPath javafx-sdk
+#+end_src
+
+* Compilar aplicación
+** En GNU/Linux
+#+begin_src sh
+  $ javac --module-path <path_to_javafx_lib> --add-modules javafx.controls -d build/ src/dam/optativa/HelloWorldFx.java
+#+end_src
+
+** En Windows
+#+begin_src sh
+  $ javac --module-path javafx-sdk/javafx-sdk-21.0.10/lib --add-modules javafx.controls -d build/ src/dam/optativa/HelloWorldFx.java
+#+end_src
+
+* Crear JAR
+** GNU/Linux
+#+begin_src sh
+  $ jar --create --file=build/HelloWorldFx.jar --manifest=manifest/MANIFEST.MF -C build/ .
+#+end_src
+
+** Windows
+#+begin_src sh
+  $ jar --create --file=build/HelloWorldFx.jar --manifest=manifest/MANIFEST.MF -C build/ .
+#+end_src
+
+* Ejecutar
+#+begin_src sh
+  $ java --module-path javafx-sdk/javafx-sdk-21.0.10/lib --add-modules javafx.controls -jar build/HelloWorldFx.jar
+#+end_src
+
+* Crear ejecutable
+** Para distros Debian (deb)
+#+begin_src sh
+  $ jpackage --input build/ \
+      --name HelloWorldFx \
+      --main-jar HelloWorldFx.jar \
+      --main-class dam.optativa.HelloWorldFx \
+      --type deb \
+      --module-path path_to_javafx_lib --add-modules javafx.controls
+#+end_src
+
+** Para Windows
+#+begin_src sh
+  $ jpackage --input build/ `
+            --name HelloWorldFx `
+            --main-jar HelloWorldFx.jar `
+            --main-class dam.optativa.HelloWorldFx `
+            --type exe `
+            --module-path javafx-sdk/javafx-sdk-21.0.10/lib `
+            --add-modules javafx.controls
+#+end_src
