@@ -49,3 +49,15 @@ jobs:
       with:
         name: HelloWorldFx-Installer
         path: dist/*.deb
+    
+    - name: Upload executable
+      uses: actions/uploads-artifact@v1
+      with: 
+        name: HelloWorldFx-Executable
+        path: HelloWorldFx.exe
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: github.ref_type == 'tag'
+      with:
+        files: "*.deb"
