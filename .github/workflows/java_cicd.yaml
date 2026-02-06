@@ -1,5 +1,4 @@
-
-name: CI
+name: JavaFX Compile and Exe
 
 on:
   push:
@@ -7,19 +6,46 @@ on:
   pull_request:
     branches: [ "main" ]
 
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Download and Unzip JavaFX
+      run: |
+        wget https://download2.gluonhq.com/openjfx/17.0.10/openjfx-17.0.10_linux-x64_bin-sdk.zip
+        unzip openjfx-17.0.10_linux-x64_bin-sdk.zip -d javafx-sdk
+
+    - name: Compile
+      run: |
+        javac --module-path javafx-sdk/javafx-sdk-17.0.10/lib --add-modules javafx.controls -d build/ src/dam/optativa/HelloWorldFx.java
+
+    - name: Create JAR
+      run: jar --create --file=build/HelloWorldFx.jar --main-class=dam.optativa.HelloWorldFx -C build/ .
+
+    - name: Create DEB
+      run: |
+        jpackage --input build/ \
+          --name HelloWorldFx \
+          --main-jar HelloWorldFx.jar \
+          --main-class dam.optativa.HelloWorldFx \
+          --type deb \
+          --module-path javafx-sdk/javafx-sdk-17.0.10/lib \
+          --add-modules javafx.controls \
+
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HelloWorldFx-Installer
+        path: dist/*.deb
