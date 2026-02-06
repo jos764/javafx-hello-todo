@@ -28,7 +28,7 @@ jobs:
 
     - name: Compile
       run: |
-        javac --module-path javafx-sdk/javafx-sdk-17.0.10/lib --add-modules javafx.controls -d build/ javafx-hello-todo/src/dam/optativa/HelloWorldFx.java
+        javac --module-path javafx-sdk/javafx-sdk-17.0.10/lib --add-modules javafx.controls -d build/ src/dam/optativa/HelloWorldFx.java
 
     - name: Create JAR
       run: jar --create --file=build/HelloWorldFx.jar --main-class=dam.optativa.HelloWorldFx -C build/ .
